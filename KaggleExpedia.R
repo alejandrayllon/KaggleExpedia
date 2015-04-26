@@ -243,75 +243,7 @@ write.csv(Expedia_Info5, "Expedia_Predict5.csv", row.names = FALSE)
 #FIFTH TRY, 0.57705
 
 
-
-
-
-
-
-
-
-
-
-#Bring in train data and load caret
-Expedia = read.csv("train.csv")
-Expedia6 = Expedia[c(5,6,9,10,11,15,16,23,51)]
-
-#Install Hmisc to use impute
-install.packages("Hmisc")
-library(Hmisc)
-
-#Get rid of zeros in history of the visitors star rating and replace with median of the rest
-Expedia6$visitor_hist_starrating[Expedia6$visitor_hist_starrating == 0] <- NA
-Expedia6$visitor_hist_starrating <- impute(Expedia6$visitor_hist_starrating, median)
-
-#Get rid of zeros in history of the visitors price per night and replace with median of the rest
-Expedia6$visitor_hist_adr_usd[Expedia6$visitor_hist_adr_usd == 0] <- NA
-Expedia6$visitor_hist_adr_usd <- impute(Expedia6$visitor_hist_adr_usd, median)
-
-#Not getting rid of zeros in the star rating, since not being able to see a review
-#should have a negative effect on people, same with review score
-
-#Brand bool, price, promotion flag, and Saturday bool do not have zeros that need to be replaced
-
-#Use data splitting
-install.packages("caret")
-library(caret)
-DataSplit6 <- createDataPartition(y=Expedia6$booking_bool, p=0.75, list=FALSE)
-
-train6 <- Expedia6[DataSplit6,]
-test6 <- Expedia6[-DataSplit6]
-
-Ex6 <- train(booking_bool~visitor_hist_starrating+visitor_hist_adr_usd+prop_starrating+
-               prop_review_score+prop_brand_bool+promotion_flag+
-               srch_saturday_night_bool, data = Expedia6, method = "glm")
-
-summary(Ex6)
-
-#  Coefficients:
-#                             Estimate Std. Error t value Pr(>|t|)    
-#  (Intercept)               2.125e-02  7.094e-03   2.995  0.00274 ** 
-#  visitor_hist_starrating  -5.735e-03  2.249e-03  -2.551  0.01076 *  
-#  visitor_hist_adr_usd      2.611e-05  1.413e-05   1.848  0.06465 .  
-#  prop_starrating           1.673e-03  3.061e-04   5.467 4.57e-08 ***
-#  prop_review_score         2.997e-03  3.094e-04   9.689  < 2e-16 ***
-#  prop_brand_bool           2.950e-03  6.449e-04   4.574 4.78e-06 ***
-#  promotion_flag            1.318e-02  7.456e-04  17.681  < 2e-16 ***
-#  srch_saturday_night_bool  1.900e-03  6.016e-04   3.158  0.00159 ** 
-
-#Load data to be tested
-Expedia_Test = read.csv("test.csv")
-
-#Prepare ID
-Expedia_ID <- paste(Expedia_Test$srch_id, Expedia_Test$prop_id, sep = "-", collapse = NULL)
-
-#Predict
-Expedia_Predictions6 <- predict(Ex6, newdata = Expedia_Test)
-
-#Output predictions
-Expedia_Info6 <- data.frame("srch-prop_id" = Expedia_ID, "booking_bool" = Expedia_Predictions6)
-write.csv(Expedia_Info6, "Expedia_Predict6.csv", row.names = FALSE)
-
-#SIXTH TRY, 0.56511
+#I'm a math major yet counted from 5 to 7, oops.
 
 
 #For my seventh attempt, I decided to replace the zeros in visitor_hist_adr_usd and replace
